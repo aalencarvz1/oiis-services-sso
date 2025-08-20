@@ -9,5 +9,20 @@ spring:
       username: ${DB_USER:root}
       password: ${DB_PASSWORD:masterkey}
       driver-class-name: ${DB_DRIVER_CLASS_NAME:com.mysql.cj.jdbc.Driver}
+  mail:
+    host: ${MAIL_HOST}
+    port: ${MAIL_PORT}
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    protocol: ${MAIL_PROTOCOL}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          ssl:
+            enable: true       # para porta 465 (SSL/TLS direto)
+            trust: "*"         # aceita qualquer certificado (equivale rejectUnauthorized: false)
+          starttls:
+            enable: false      # STARTTLS desabilitado, porque porta 465 usa SSL direto
 jwt:
   secret-key: ${JWT_SECRET_KEY:secret_key}

@@ -5,6 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class TokenRequestDTO {
-    private String token;
+public class PasswordRecoverRequestDTO {
+    private String email;
+    private String passwordChangeInterfacePath;
 }

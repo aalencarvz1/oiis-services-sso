@@ -35,4 +35,16 @@ public class AuthenticationRestController {
         logger.debug("requested check_token {}",tokenDto.getToken());
         return authenticationService.checkTokenFromDto(tokenDto).sendHttpResponse();
     }
+
+    @PostMapping("/send_email_recover_password")
+    public ResponseEntity<DefaultDataSwap> sendEmailRecoverPassword(@RequestBody(required = false) PasswordRecoverRequestDTO passwordRecoverRequestDTO) {
+        logger.debug("requested send_email_recover_password {}",passwordRecoverRequestDTO.getEmail());
+        return authenticationService.sendEmailRecoverPasswordFromDto(passwordRecoverRequestDTO).sendHttpResponse();
+    }
+
+    @PostMapping("/password_change")
+    public ResponseEntity<DefaultDataSwap> passwordChange(@RequestBody(required = false) PasswordChangeRequestDTO passwordChangeRequestDTO) {
+        logger.debug("requested send_email_recover_password {}",passwordChangeRequestDTO.getToken());
+        return authenticationService.passwordChangeFromDto(passwordChangeRequestDTO).sendHttpResponse();
+    }
 }
