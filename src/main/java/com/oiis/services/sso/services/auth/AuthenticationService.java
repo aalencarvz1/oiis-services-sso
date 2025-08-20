@@ -1,6 +1,7 @@
 package com.oiis.services.sso.services.auth;
 
 import com.oiis.libs.java.spring.commons.DefaultDataSwap;
+import com.oiis.services.sso.controllers.rest.auth.TokenRequestDTO;
 import com.oiis.services.sso.database.entities.oiis.RecordStatus;
 import com.oiis.services.sso.database.entities.oiis.User;
 import com.oiis.services.sso.database.repositories.oiis.UsersRepository;
@@ -62,7 +63,7 @@ public class AuthenticationService {
             if (StringUtils.hasText(reqUser.getEmail()) && StringUtils.hasText(reqUser.getPassword())) {
                 result = getAuthDataResult(usersRepository.findByEmail(reqUser.getEmail()),null,true,reqUser.getPassword());
             } else {
-                result.httpStatus = HttpStatus.UNAUTHORIZED;
+                result.httpStatus = HttpStatus.EXPECTATION_FAILED;
                 result.message = "missing data";
             }
         } catch (Exception e) {
@@ -71,6 +72,34 @@ public class AuthenticationService {
         return result;
     }
 
+    public DefaultDataSwap register(User reqUser){
+        DefaultDataSwap result = new DefaultDataSwap();
+        try {
+            if (StringUtils.hasText(reqUser.getEmail()) && StringUtils.hasText(reqUser.getPassword())) {
+                Optional<User> user = usersRepository.findByEmail(reqUser.getEmail());
+                if (user.isEmpty()) {
+                    reqUser.setPassword(encoder.encode(reqUser.getPassword()));
+                    Optional.ofNullable(usersRepository.save(reqUser));
+                    usersRepository.save(reqUser);
+                    result = getAuthDataResult(usersRepository.findByEmail(reqUser.getEmail()), null);
+                } else {
+                    result.httpStatus = HttpStatus.CONFLICT;
+                    result.message = "user already exists";
+                }
+            } else {
+                result.httpStatus = HttpStatus.EXPECTATION_FAILED;
+                result.message = "missing data";
+            }
+        } catch (Exception e) {
+            result.setException(e);
+        }
+        return result;
+    }
+
+
+    public DefaultDataSwap checkTokenFromDto(TokenRequestDTO tokenRequest) {
+        return checkToken(tokenRequest.getToken());
+    }
 
     public DefaultDataSwap checkToken(String token){
         DefaultDataSwap result = new DefaultDataSwap();
@@ -81,7 +110,7 @@ public class AuthenticationService {
                     result = getAuthDataResult(usersRepository.findById(Long.valueOf(String.valueOf(result.data))),token);
                 }
             } else {
-                result.httpStatus = HttpStatus.UNAUTHORIZED;
+                result.httpStatus = HttpStatus.EXPECTATION_FAILED;
                 result.message = "missing data";
             }
         } catch (Exception e) {
