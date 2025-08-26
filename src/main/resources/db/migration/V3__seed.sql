@@ -1,0 +1,2 @@
+insert ignore into record_status(id, status_reg_id, created_at, name, is_active) values (1, 1, current_timestamp, 'ACTIVE',1);
+insert ignore into record_status(id, status_reg_id, created_at, name, is_active) values (2, 1, current_timestamp, 'INACTIVE',0);

@@ -1,7 +1,8 @@
-package com.oiis.services.sso.database.entities.oiis;
+package com.oiis.services.sso.database.entities.sso;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
@@ -10,7 +11,7 @@ import lombok.Setter;
 @Table(name = "record_status")
 @Getter
 @Setter
-public class RecordStatus extends BaseOiisTableModel {
+public class RecordStatus extends BaseSsoTableModel {
 
     @Column(name = "name", nullable = false, length = 127)
     private String name;
@@ -18,7 +19,8 @@ public class RecordStatus extends BaseOiisTableModel {
     @Column(name = "is_active", nullable = false)
     private Integer isActive = 1;
 
-    @Column(name = "description", columnDefinition = "TEXT")
+    @Lob
+    @Column(name = "description", length = Integer.MAX_VALUE)
     private String description;
 
     public void setIsActive(Integer isActive) {

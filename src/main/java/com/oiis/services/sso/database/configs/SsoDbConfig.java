@@ -19,22 +19,22 @@ import java.util.Map;
 
 @Configuration
 @EnableJpaRepositories(
-        basePackages = "com.oiis.services.sso.database.repositories.oiis",
-        entityManagerFactoryRef = "oiisEntityManagerFactory",
-        transactionManagerRef = "oiisTransactionManager"
+        basePackages = "com.oiis.services.sso.database.repositories.sso",
+        entityManagerFactoryRef = "ssoEntityManagerFactory",
+        transactionManagerRef = "ssoTransactionManager"
 )
-public class OiisDbConfig {
+public class SsoDbConfig {
 
     @Bean
-    @ConfigurationProperties(prefix = "spring.datasource.oiis")
+    @ConfigurationProperties(prefix = "spring.datasource.sso")
     @Primary
-    public DataSource oiisDataSource() {
+    public DataSource ssoDataSource() {
         return DataSourceBuilder.create().build();
     }
 
-    @Bean(name = "oiisEntityManagerFactory")
+    @Bean(name = "ssoEntityManagerFactory")
     @Primary
-    public LocalContainerEntityManagerFactoryBean oiisEntityManagerFactory(
+    public LocalContainerEntityManagerFactoryBean ssoEntityManagerFactory(
             EntityManagerFactoryBuilder builder) {
 
         Map<String, Object> properties = new HashMap<>();
@@ -42,17 +42,17 @@ public class OiisDbConfig {
         properties.put("hibernate.globally_quoted_identifiers", true);
 
         return builder
-                .dataSource(oiisDataSource())
-                .packages("com.oiis.services.sso.database.entities.oiis")
-                .persistenceUnit("oiis")
+                .dataSource(ssoDataSource())
+                .packages("com.oiis.services.sso.database.entities.sso")
+                .persistenceUnit("sso")
                 .properties(properties)
                 .build();
     }
 
-    @Bean(name = "oiisTransactionManager")
+    @Bean(name = "ssoTransactionManager")
     @Primary
-    public PlatformTransactionManager oiisTransactionManager(
-            @Qualifier("oiisEntityManagerFactory") EntityManagerFactory oiisEntityManagerFactory) {
-        return new JpaTransactionManager(oiisEntityManagerFactory);
+    public PlatformTransactionManager ssoTransactionManager(
+            @Qualifier("ssoEntityManagerFactory") EntityManagerFactory ssoEntityManagerFactory) {
+        return new JpaTransactionManager(ssoEntityManagerFactory);
     }
 }

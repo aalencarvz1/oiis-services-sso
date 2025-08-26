@@ -1,5 +1,6 @@
-package com.oiis.services.sso.database.entities.oiis;
+package com.oiis.services.sso.database.entities.sso;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.oiis.services.sso.database.entities.BaseTableModel;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -10,7 +11,7 @@ import java.time.LocalDateTime;
 @MappedSuperclass
 @Getter
 @Setter
-public abstract class BaseOiisTableModel extends BaseTableModel {
+public abstract class BaseSsoTableModel extends BaseTableModel {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
@@ -28,6 +29,7 @@ public abstract class BaseOiisTableModel extends BaseTableModel {
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
+    @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "status_reg_id", insertable = false, updatable = false)
     private RecordStatus recordStatus;

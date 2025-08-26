@@ -3,12 +3,25 @@ server:
 spring:
   application:
     name: sso
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect:
+          org:
+            hibernate:
+              dialect: MySQL8Dialect
   datasource:
-    oiis:
+    sso:
       jdbc-url: ${DB_JDBC_URL:jdbc:mysql://127.0.0.1:3306/oiis_sso}
       username: ${DB_USER:root}
       password: ${DB_PASSWORD:masterkey}
       driver-class-name: ${DB_DRIVER_CLASS_NAME:com.mysql.cj.jdbc.Driver}
+  flyway:
+    enabled: false
+    baseline-on-migrate: true
+    locations: classpath=db/migration
   mail:
     host: ${MAIL_HOST}
     port: ${MAIL_PORT}

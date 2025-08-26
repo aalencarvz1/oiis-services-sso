@@ -1,7 +1,7 @@
 package com.oiis.services.sso.services.jwt;
 
 import com.oiis.libs.java.spring.commons.DefaultDataSwap;
-import com.oiis.services.sso.database.entities.oiis.User;
+import com.oiis.services.sso.database.entities.sso.User;
 import com.oiis.services.sso.properties.jwt.JwtProperties;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
@@ -31,18 +31,27 @@ public class JwtService {
         this.jwtParsaer = Jwts.parser().setSigningKey(key).build();
     }
 
-    public String createToken(User user) {
+    public String createToken(User user, Long expiration) {
         String result = null;
         if (user != null) {
+            logger.debug("creating token for user {} {}",user.getId(),user.getEmail());
             result = Jwts.builder()
                     .signWith(key, SignatureAlgorithm.HS256) // usa a mesma key, mas novo builder
                     .setSubject(String.valueOf(user.getId()))
-                    .claim("user_id", user.getId())
+                    .claim("id", user.getId())
                     .setIssuedAt(new Date())
-                    .setExpiration(new Date(System.currentTimeMillis() + 86400000)) // 1 dia
+                    .setExpiration(new Date(System.currentTimeMillis() + expiration))
                     .compact();
         }
         return result;
+    }
+
+    public String createToken(User user) {
+        return createToken(user, 3600000L); //1 hour
+    }
+
+    public String createRefreshToken(User user) {
+        return createToken(user, 86400000L); //1 day
     }
 
     public DefaultDataSwap checkToken(String token){
@@ -51,7 +60,7 @@ public class JwtService {
             logger.debug("checking token {}",token);
             if (StringUtils.hasText(token)) {
                 Claims claims = jwtParsaer.parseClaimsJws(token).getBody();
-                String userId = String.valueOf(claims.get("user_id"));
+                String userId = String.valueOf(claims.get("id"));
                 if (StringUtils.hasText(userId)) {
                     result.data = userId;
                     result.success = true;
