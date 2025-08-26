@@ -1,248 +1,206 @@
 # SSO Service
 
-This project implements a Single Sign-On (SSO) service built with Spring Boot, providing authentication and token validation for client applications. It uses JSON Web Tokens (JWT) for secure authentication and integrates with a database to manage user credentials. The primary entry point for client API requests is the `AuthenticationRestController`.
+## Overview
 
-## Features
-- User authentication via email and password.
-- JWT token generation and validation.
-- Public endpoints for login, token checking, and other authentication-related operations.
-- Secure password storage using BCrypt.
-- Configurable public endpoints for unauthenticated access.
-- RESTful API for integration with client applications.
+This project is a Single Sign-On (SSO) service built with Spring Boot. It provides user authentication, registration, token management using JWT (JSON Web Tokens), and password recovery via email. The service uses a MySQL database for storing user data, Flyway for database migrations (executed after Hibernate schema creation), and Spring Security for handling CORS and public endpoints.
 
-## Prerequisites
-- **Java**: 17 or higher
-- **Spring Boot**: 3.x
-- **Database**: Configured relational database (e.g., MySQL, PostgreSQL) for user storage
-- **Maven**: For dependency management
-- **External Client Applications**: Must be configured to send JWT tokens in the `Authorization` header
+Key features:
+- User registration and login with email and password.
+- JWT-based authentication with access tokens and refresh tokens.
+- Token validation and refresh.
+- Password recovery workflow: Send recovery email with a token and change password using the token.
+- Basic email validation and sending using JavaMailSender.
 
-## Installation
+The service is designed to be secure, with password hashing via BCrypt, and supports CORS for cross-origin requests. All endpoints are under `/auth` and are publicly accessible (no authentication required for these routes, as defined in `SecurityConfig`).
 
-1. **Clone the Repository**:
-   ```bash
-   git clone <repository-url>
-   cd sso-service
-   ```
+## Dependencies
 
-2. **Add Dependencies**:
-   Ensure the following dependencies are included in your `pom.xml`:
+- **Spring Boot**: Core framework.
+- **Spring Security**: For security configurations (CSRF disabled, CORS enabled).
+- **JWT (io.jsonwebtoken)**: For token generation and validation.
+- **Spring Data JPA**: For database interactions with entities like `User`.
+- **Flyway**: For database migrations (located in `classpath:db/migration`).
+- **Lombok**: For getters/setters in entities.
+- **Jackson**: For JSON processing.
+- **SLF4J**: For logging.
+- **MySQL Connector**: Assumes a MySQL database (configured in `FlywayAfterHibernate` with hardcoded credentials for dev: URL `jdbc:mysql://127.0.0.1:3306/oiis_sso_dev_v1`, user `root`, password `masterkey`).
+- **JavaMailSender**: For email sending (configured via `spring.mail` properties).
 
-   ```xml
-   <dependencies>
-       <!-- Spring Boot Starter Web -->
-       <dependency>
-           <groupId>org.springframework.boot</groupId>
-           <artifactId>spring-boot-starter-web</artifactId>
-       </dependency>
-       <!-- Spring Boot Starter Security -->
-       <dependency>
-           <groupId>org.springframework.boot</groupId>
-           <artifactId>spring-boot-starter-security</artifactId>
-       </dependency>
-       <!-- Spring Boot Starter Data JPA -->
-       <dependency>
-           <groupId>org.springframework.boot</groupId>
-           <artifactId>spring-boot-starter-data-jpa</artifactId>
-       </dependency>
-       <!-- JWT Library -->
-       <dependency>
-           <groupId>io.jsonwebtoken</groupId>
-           <artifactId>jjwt</artifactId>
-           <version>0.9.1</version>
-       </dependency>
-       <!-- Database Driver (e.g., MySQL) -->
-       <dependency>
-           <groupId>mysql</groupId>
-           <artifactId>mysql-connector-java</artifactId>
-           <version>8.0.33</version>
-       </dependency>
-       <!-- Lombok (optional, for reducing boilerplate code) -->
-       <dependency>
-           <groupId>org.projectlombok</groupId>
-           <artifactId>lombok</artifactId>
-           <scope>provided</scope>
-       </dependency>
-   </dependencies>
-   ```
+**Note**: In production, replace hardcoded database credentials with environment variables or a secure configuration.
 
-3. **Build the Project**:
-   ```bash
-   mvn clean install
-   ```
+## Database Schema
 
-4. **Run the Application**:
-   ```bash
-   mvn spring-boot:run
-   ```
+The service uses JPA entities:
+- **User**: Stores user details like `email`, `password` (hashed), `lastToken`, `lastRefreshToken`, `lastPasswordChangeToken`, and status fields.
+- **BaseSsoTableModel**: Abstract base for entities with common fields like `id`, `statusRegId` (active/inactive), `createdAt`, `deletedAt`.
+
+Migrations are handled by Flyway after Hibernate creates the schema.
 
 ## Configuration
 
-Configure the application using `application.yml` or `application.properties`. Below are the required properties:
+- **JWT Properties**: Defined in `JwtProperties` (e.g., secret key via `jwt.secret-key` in application properties).
+- **Mail Properties**: Configured via `spring.mail.username`, etc. Emails are sent from this address.
+- **Security**: All `/auth/*` endpoints are public. Other requests are denied by default.
 
-### application.yml
-```yaml
-spring:
-  datasource:
-    url: jdbc:mysql://localhost:3306/sso_db?useSSL=false&serverTimezone=UTC
-    username: your_username
-    password: your_password
-    driver-class-name: com.mysql.cj.jdbc.Driver
-  jpa:
-    hibernate:
-      ddl-auto: update
-    show-sql: true
+## Endpoints
 
-jwt:
-  secret-key: "your-secure-jwt-secret-key"  # Replace with a secure key (at least 256 bits)
-```
+All endpoints are under `/auth` and use POST methods. Requests and responses are in JSON format. Responses are wrapped in a `DefaultDataSwap` object, which includes:
+- `success`: Boolean (true/false).
+- `data`: Object (e.g., user details and token).
+- `message`: String (error message if failed).
+- `httpStatus`: HTTP status code.
 
-### application.properties
-```properties
-spring.datasource.url=jdbc:mysql://localhost:3306/sso_db?useSSL=false&serverTimezone=UTC
-spring.datasource.username=your_username
-spring.datasource.password=your_password
-spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
-spring.jpa.hibernate.ddl-auto=update
-spring.jpa.show-sql=true
-jwt.secret-key=your-secure-jwt-secret-key
-```
+### 1. **Login**
+   - **Method**: POST
+   - **Path**: `/auth/login`
+   - **Description**: Authenticates a user with email and password. Returns a JWT access token, refresh token, and user details if successful.
+   - **Request Body** (UserRequestDTO):
+     ```json
+     {
+       "email": "string",
+       "password": "string"
+     }
+     ```
+   - **Response**:
+     - Success (200 OK):
+       ```json
+       {
+         "success": true,
+         "data": {
+           "token": "jwt-access-token",
+           "refreshToken": "jwt-refresh-token",
+           "user": {
+             "id": 1,
+             "email": "user@example.com"
+           }
+         }
+       }
+       ```
+     - Error (e.g., 401 Unauthorized): `{ "success": false, "message": "password not match" }`
+   - **Example (curl)**:
+     ```
+     curl -X POST http://localhost:8080/auth/login \
+     -H "Content-Type: application/json" \
+     -d '{"email": "user@example.com", "password": "secret"}'
+     ```
 
-### Property Descriptions
-- **`spring.datasource.url`**: URL of the database for user storage.
-- **`spring.datasource.username`**: Database username.
-- **`spring.datasource.password`**: Database password.
-- **`spring.datasource.driver-class-name`**: JDBC driver class for the database.
-- **`spring.jpa.hibernate.ddl-auto`**: Hibernate DDL strategy (e.g., `update`, `create`, `validate`).
-- **`jwt.secret-key`**: A secure key for signing JWT tokens (must be at least 256 bits for HS256).
+### 2. **Register**
+   - **Method**: POST
+   - **Path**: `/auth/register`
+   - **Description**: Registers a new user with email and password. Password is hashed with BCrypt. Returns JWT tokens and user details if successful.
+   - **Request Body** (UserRequestDTO): Same as Login.
+   - **Response**: Same as Login.
+     - Error (409 Conflict): `{ "success": false, "message": "user already exists" }`
+   - **Example (curl)**:
+     ```
+     curl -X POST http://localhost:8080/auth/register \
+     -H "Content-Type: application/json" \
+     -d '{"email": "newuser@example.com", "password": "secret"}'
+     ```
 
-## Usage
+### 3. **Check Token**
+   - **Method**: POST
+   - **Path**: `/auth/check_token`
+   - **Description**: Validates a JWT token and returns user details if valid.
+   - **Request Body** (TokenRequestDTO):
+     ```json
+     {
+       "token": "jwt-token"
+     }
+     ```
+   - **Response**: Similar to Login (includes user and token).
+     - Error (401 Unauthorized): `{ "success": false, "message": "token expired" }`
+   - **Example (curl)**:
+     ```
+     curl -X POST http://localhost:8080/auth/check_token \
+     -H "Content-Type: application/json" \
+     -d '{"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."}'
+     ```
 
-The `AuthenticationRestController` is the main entry point for client API requests. It exposes the following endpoints:
+### 4. **Refresh Token**
+   - **Method**: POST
+   - **Path**: `/auth/refresh_token`
+   - **Description**: Generates a new access token and refresh token using a valid refresh token.
+   - **Request Body** (RefreshTokenRequestDTO):
+     ```json
+     {
+       "refreshToken": "jwt-refresh-token"
+     }
+     ```
+   - **Response**: Same as Login (new tokens and user).
+     - Error: Similar to Check Token.
+   - **Example (curl)**:
+     ```
+     curl -X POST http://localhost:8080/auth/refresh_token \
+     -H "Content-Type: application/json" \
+     -d '{"refreshToken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."}'
+     ```
 
-### Public Endpoints
-The following endpoints are publicly accessible (no authentication required), as defined in `SecurityConfig.java`:
+### 5. **Send Email Recover Password**
+   - **Method**: POST
+   - **Path**: `/auth/send_email_recover_password`
+   - **Description**: Sends a password recovery email with a link containing a one-time token. The link points to a provided interface path.
+   - **Request Body** (PasswordRecoverRequestDTO):
+     ```json
+     {
+       "email": "string",
+       "passwordChangeInterfacePath": "string"
+     }
+     ```
+   - **Response**:
+     - Success (200 OK): `{ "success": true }`
+     - Error (417 Expectation Failed): `{ "success": false, "message": "user not found" }`
+   - **Email Content**: Includes a link like `{passwordChangeInterfacePath}/{token}`.
+   - **Example (curl)**:
+     ```
+     curl -X POST http://localhost:8080/auth/send_email_recover_password \
+     -H "Content-Type: application/json" \
+     -d '{"email": "user@example.com", "passwordChangeInterfacePath": "https://example.com/reset"}'
+     ```
 
-- **`/auth/login`**: Authenticates a user and returns a JWT token.
-- **`/auth/check_token`**: Validates a JWT token.
-- **`/auth/register`**: Registers a new user (implementation not shown in provided files).
-- **`/auth/send_email_recover_password`**: Sends a password recovery email.
-- **`/auth/password_change`**: Changes a user's password.
-- **`/auth/refresh_token`**: Refreshes an existing JWT token.
-
-### API Endpoints
-
-#### 1. Login
-- **Endpoint**: `POST /auth/login`
-- **Request Body**:
-  ```json
-  {
-      "email": "user@example.com",
-      "password": "your_password"
-  }
-  ```
-- **Response** (Success):
-  ```json
-  {
-      "success": true,
-      "data": {
-          "user_id": 1,
-          "token": "eyJhbGciOiJIUzI1NiJ9..."
-      }
-  }
-  ```
-- **Response** (Error):
-  ```json
-  {
-      "success": false,
-      "message": "user not found",
-      "httpStatus": 401
-  }
-  ```
-
-#### 2. Check Token
-- **Endpoint**: `POST /auth/check_token`
-- **Request Body**:
-  ```json
-  {
-      "token": "eyJhbGciOiJIUzI1NiJ9..."
-  }
-  ```
-- **Response** (Success):
-  ```json
-  {
-      "success": true,
-      "data": {
-          "user_id": 1,
-          "token": "eyJhbGciOiJIUzI1NiJ9..."
-      }
-  }
-  ```
-- **Response** (Error):
-  ```json
-  {
-      "success": false,
-      "message": "invalid token",
-      "httpStatus": 401
-  }
-  ```
-
-### Example Request
-To authenticate a user:
-
-```bash
-curl -X POST http://localhost:8080/auth/login \
--H "Content-Type: application/json" \
--d '{"email": "user@example.com", "password": "your_password"}'
-```
-
-To validate a token:
-
-```bash
-curl -X POST http://localhost:8080/auth/check_token \
--H "Content-Type: application/json" \
--d '{"token": "eyJhbGciOiJIUzI1NiJ9..."}'
-```
+### 6. **Password Change**
+   - **Method**: POST
+   - **Path**: `/auth/password_change`
+   - **Description**: Changes the user's password using a valid recovery token. Password is hashed.
+   - **Request Body** (PasswordChangeRequestDTO):
+     ```json
+     {
+       "token": "recovery-token",
+       "password": "new-password"
+     }
+     ```
+   - **Response**:
+     - Success (200 OK): `{ "success": true }`
+     - Error (417 Expectation Failed): `{ "success": false, "message": "token not match" }`
+   - **Example (curl)**:
+     ```
+     curl -X POST http://localhost:8080/auth/password_change \
+     -H "Content-Type: application/json" \
+     -d '{"token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...", "password": "newsecret"}'
+     ```
 
 ## How It Works
-1. **AuthenticationRestController**:
-    - Handles incoming requests for login and token validation.
-    - Delegates to `AuthenticationService` for processing.
 
-2. **AuthenticationService**:
-    - Manages user authentication by verifying email and password against the database.
-    - Uses `JwtService` to generate or validate JWT tokens.
-    - Checks user status (active, not deleted) before issuing tokens.
+1. **Registration/Login**: Checks for existing user, hashes password, generates JWT tokens (access: 1 hour, refresh: 1 day).
+2. **Token Management**: Uses HMAC-SHA256 signing. Validation checks expiration, signature, etc.
+3. **Password Recovery**: Generates a special token, sends email with HTML/text content, and validates it on change.
+4. **Security**: All public endpoints are listed in `SecurityConfig`. User status must be active (not deleted/soft-deleted).
+5. **Logging**: Uses SLF4J for debug logs on requests and operations.
+6. **Error Handling**: Catches exceptions and returns structured errors.
 
-3. **JwtService**:
-    - Generates JWT tokens with a user ID claim and a 1-day expiration.
-    - Validates tokens by checking their signature, expiration, and structure.
-    - Returns a `DefaultDataSwap` object with success/failure details.
+## Setup and Running
 
-4. **SecurityConfig**:
-    - Configures Spring Security to allow public access to authentication endpoints.
-    - Denies access to all other endpoints by default.
-    - Disables CSRF for stateless API usage.
+1. Clone the repository.
+2. Configure `application.properties` for JWT secret, mail server, and database.
+3. Run with Maven: `mvn spring-boot:run`.
+4. Database: Ensure MySQL is running; Flyway will migrate on startup.
 
-## Integration with Client Applications
-Client applications should:
-1. Call `/auth/login` to obtain a JWT token.
-2. Include the token in the `Authorization` header (`Bearer <token>`) for protected API requests.
-3. Use `/auth/check_token` to validate tokens if needed.
+## Limitations and Improvements
 
-Ensure the client application is configured to use the SSO server's base URL (e.g., `http://localhost:8080`) and the `/auth/check_token` endpoint for token validation, as shown in the previous `BaseClientSsoSecurityConfig` example.
+- No user roles/permissions beyond basic access.
+- Hardcoded DB credentials in `FlywayAfterHibernate`—use profiles for prod.
+- Email validation is basic; enhance for production.
+- Add rate limiting for brute-force protection.
+- Tests: Add unit/integration tests for services and controllers.
 
-## Troubleshooting
-- **401 Unauthorized**: Check if the email/password is correct or if the user is active in the database.
-- **Invalid Token**: Ensure the `jwt.secret-key` matches between the SSO server and client applications.
-- **Database Errors**: Verify database connectivity and correct configuration in `application.yml`.
-- **CORS Issues**: If integrating with a frontend, ensure CORS is enabled or customized in `SecurityConfig`.
-
-## Logging
-The application uses SLF4J for logging. Key events (e.g., login attempts, token validation) are logged at the `DEBUG` level. Configure your logging framework (e.g., Logback) to capture these logs.
-
-## Contributing
-For issues, feature requests, or contributions, please submit a pull request or contact the maintainers.
-
-## License
-This project is licensed under the MIT License. See the `LICENSE` file for details.
+For questions, contact the development team.
