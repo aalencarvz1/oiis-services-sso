@@ -47,7 +47,7 @@ public class JwtService {
     }
 
     public String createToken(User user) {
-        return createToken(user, 3600000L); //1 hour
+        return createToken(user, jwtProperties.getDefaultTokenExpiration()); //1 minute
     }
 
     public String createRefreshToken(User user) {
