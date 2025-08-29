@@ -98,7 +98,7 @@ public class AuthenticationService {
         DefaultDataSwap result = new DefaultDataSwap();
         try {
             if (StringUtils.hasText(userDto.getEmail()) && StringUtils.hasText(userDto.getPassword())) {
-                result = getAuthDataResult(usersRepository.findByEmail(userDto.getEmail()),true,userDto.getPassword(), null, true, null);
+                result = getAuthDataResult(usersRepository.findByEmail(userDto.getEmail().trim().toLowerCase()),true,userDto.getPassword(), null, true, null);
             } else {
                 result.httpStatus = HttpStatus.EXPECTATION_FAILED;
                 result.message = "missing data";
@@ -113,13 +113,13 @@ public class AuthenticationService {
         DefaultDataSwap result = new DefaultDataSwap();
         try {
             if (StringUtils.hasText(userDto.getEmail()) && StringUtils.hasText(userDto.getPassword())) {
-                Optional<User> user = usersRepository.findByEmail(userDto.getEmail());
+                Optional<User> user = usersRepository.findByEmail(userDto.getEmail().trim().toLowerCase());
                 if (user.isEmpty()) {
                     User newUser = new User();
-                    newUser.setEmail(userDto.getEmail());
+                    newUser.setEmail(userDto.getEmail().trim().toLowerCase());
                     newUser.setPassword(encoder.encode(userDto.getPassword()));
                     usersRepository.save(newUser);
-                    result = getAuthDataResult(usersRepository.findByEmail(userDto.getEmail()),false,null, null, true, null);
+                    result = getAuthDataResult(usersRepository.findByEmail(userDto.getEmail().trim().toLowerCase()),false,null, null, true, null);
                 } else {
                     result.httpStatus = HttpStatus.CONFLICT;
                     result.message = "user already exists";
@@ -183,7 +183,7 @@ public class AuthenticationService {
         DefaultDataSwap result = new DefaultDataSwap();
         try {
             if (StringUtils.hasText(passwordRecoverRequestDTO.getEmail())) {
-                Optional<User> user = usersRepository.findByEmail(passwordRecoverRequestDTO.getEmail());
+                Optional<User> user = usersRepository.findByEmail(passwordRecoverRequestDTO.getEmail().trim().toLowerCase());
                 if (user.isPresent()) {
                     user.get().setLastPasswordChangeToken(jwtService.createToken(user.get()));
                     usersRepository.save(user.get());
@@ -191,7 +191,7 @@ public class AuthenticationService {
                     String text = "Acesse este link para criar uma nova senha: " + passwordRecoverRequestDTO.getPasswordChangeInterfacePath() + "/" + user.get().getLastPasswordChangeToken();
                     String html = "Acesse este link para criar uma nova senha: <br /><a href=\"" + passwordRecoverRequestDTO.getPasswordChangeInterfacePath() + "/" + user.get().getLastPasswordChangeToken() + "\">Alterar senha</a>";
 
-                    mailService.sendEmail(passwordRecoverRequestDTO.getEmail(), subject, text, html);
+                    mailService.sendEmail(passwordRecoverRequestDTO.getEmail().trim().toLowerCase(), subject, text, html);
 
                     result.success = true; //sendMail throws exception if error
                 } else {

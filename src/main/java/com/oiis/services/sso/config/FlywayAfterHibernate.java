@@ -11,13 +11,19 @@ public class FlywayAfterHibernate {
     // Criar manualmente o bean do Flyway
 
     //@Value("${spring.datasource.sso.jdbc-url}")
-    private final String dbUrl = "jdbc:mysql://127.0.0.1:3306/oiis_sso_dev_v1";
+    private final String dbUrl;// = "jdbc:mysql://127.0.0.1:3306/oiis_sso_dev_v1";
 
     //@Value("${spring.datasource.sso.user}")
-    private final String dbUser = "root";
+    private final String dbUser;// = "root";
 
     //@Value("${spring.datasource.sso.password}")
-    private final String dbPassword = "masterkey";
+    private final String dbPassword; //= "masterkey";
+
+    public FlywayAfterHibernate(@Value("${spring.datasource.sso.jdbc-url}") String dbUrl, @Value("${spring.datasource.sso.username}") String dbUser, @Value("${spring.datasource.sso.password}") String dbPassword) {
+        this.dbUrl = dbUrl;
+        this.dbUser = dbUser;
+        this.dbPassword = dbPassword;
+    }
 
     @Bean
     public Flyway flyway() {
