@@ -41,3 +41,6 @@ jwt:
   secret-key: ${JWT_SECRET_KEY:secret_key}
   default-token-expiration: ${DEFAULT_TOKEN_EXPIRATION:60000}
   default-refresh-token-expiration: ${DEFAULT_REFRESH_TOKEN_EXPIRATION:300000}
+security:
+  password-rules:
+    min-length: ${DEFAULT_MIN_PASSWORD_LENGTH:8}

@@ -13,6 +13,7 @@ import com.oiis.services.sso.services.mail.MailService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -40,6 +41,9 @@ public class AuthenticationService {
 
     @Autowired
     private ObjectMapper objectMapper;
+
+    @Value("${security.password-rules.min-length}")
+    private Integer minPassordLength;
 
     private static final PasswordEncoder encoder = new BCryptPasswordEncoder();
 
@@ -109,17 +113,41 @@ public class AuthenticationService {
         return result;
     }
 
+    public DefaultDataSwap passworRulesCheck(String password) {
+        DefaultDataSwap result = new DefaultDataSwap();
+        try {
+            if (StringUtils.hasText(password)) {
+                if (password.length() < minPassordLength) {
+                    result.httpStatus = HttpStatus.EXPECTATION_FAILED;
+                    result.message = "password length less than " + minPassordLength + " characters";
+                } else {
+                    result.success = true;
+                }
+            } else {
+                result.httpStatus = HttpStatus.EXPECTATION_FAILED;
+                result.message = "empty password";
+            }
+        } catch (Exception e) {
+            result.setException(e);
+        }
+        return result;
+    }
+
     public DefaultDataSwap register(UserRequestDTO userDto){
         DefaultDataSwap result = new DefaultDataSwap();
         try {
             if (StringUtils.hasText(userDto.getEmail()) && StringUtils.hasText(userDto.getPassword())) {
                 Optional<User> user = usersRepository.findByEmail(userDto.getEmail().trim().toLowerCase());
                 if (user.isEmpty()) {
-                    User newUser = new User();
-                    newUser.setEmail(userDto.getEmail().trim().toLowerCase());
-                    newUser.setPassword(encoder.encode(userDto.getPassword()));
-                    usersRepository.save(newUser);
-                    result = getAuthDataResult(usersRepository.findByEmail(userDto.getEmail().trim().toLowerCase()),false,null, null, true, null);
+
+                    result = passworRulesCheck(userDto.getPassword());
+                    if (result.success) {
+                        User newUser = new User();
+                        newUser.setEmail(userDto.getEmail().trim().toLowerCase());
+                        newUser.setPassword(encoder.encode(userDto.getPassword()));
+                        usersRepository.save(newUser);
+                        result = getAuthDataResult(usersRepository.findByEmail(userDto.getEmail().trim().toLowerCase()), false, null, null, true, null);
+                    }
                 } else {
                     result.httpStatus = HttpStatus.CONFLICT;
                     result.message = "user already exists";
@@ -220,9 +248,13 @@ public class AuthenticationService {
                     Optional<User> user = usersRepository.findById(Long.valueOf(String.valueOf(userObject.getOrDefault("id",null))));
                     if (user.isPresent()) {
                         if (passwordChangeRequestDTO.getToken().equals(user.get().getLastPasswordChangeToken())) {
-                            user.get().setPassword(encoder.encode(passwordChangeRequestDTO.getPassword()));
-                            usersRepository.save(user.get());
-                            result.success = true; //sendMail throws exception if error
+
+                            result = passworRulesCheck(passwordChangeRequestDTO.getPassword());
+                            if (result.success) {
+                                user.get().setPassword(encoder.encode(passwordChangeRequestDTO.getPassword()));
+                                usersRepository.save(user.get());
+                                result.success = true;
+                            }
                         } else {
                             result.httpStatus = HttpStatus.EXPECTATION_FAILED;
                             result.message = "token not match";
