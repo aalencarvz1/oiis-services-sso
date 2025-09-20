@@ -11,7 +11,7 @@
 	<groupId>com.oiis.services</groupId>
 	<artifactId>sso</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>sso</name>
+	<name>oiis-sso-service</name>
 	<description>Demo project for Spring Boot</description>
 	<url/>
 	<licenses>
