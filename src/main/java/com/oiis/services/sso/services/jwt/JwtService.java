@@ -68,23 +68,23 @@ public class JwtService {
                     result.message = "invalid token";
                 }
             } else {
-                result.httpStatus = HttpStatus.UNAUTHORIZED;
+                result.httpStatusCode = HttpStatus.UNAUTHORIZED.value();
                 result.message = "missing data";
             }
         } catch (ExpiredJwtException e) {
-            result.httpStatus = HttpStatus.UNAUTHORIZED;
+            result.httpStatusCode = HttpStatus.UNAUTHORIZED.value();
             result.message = "token expired";
             result.setException(e);
         } catch (SignatureException e) {
-            result.httpStatus = HttpStatus.UNAUTHORIZED;
+            result.httpStatusCode = HttpStatus.UNAUTHORIZED.value();
             result.message = "invalid signature";
             result.setException(e);
         } catch (MalformedJwtException e) {
-            result.httpStatus = HttpStatus.BAD_REQUEST;
+            result.httpStatusCode = HttpStatus.BAD_REQUEST.value();
             result.message = "malformed token";
             result.setException(e);
         } catch (Exception e) {
-            result.httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+            result.httpStatusCode = HttpStatus.INTERNAL_SERVER_ERROR.value();
             result.message = "unexpected error";
             result.setException(e);
         }

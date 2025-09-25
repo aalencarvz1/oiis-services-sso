@@ -3,7 +3,6 @@ package com.oiis.services.sso.services.auth;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.oiis.libs.java.spring.commons.DefaultDataSwap;
-import com.oiis.services.sso.config.SecurityConfig;
 import com.oiis.services.sso.controllers.rest.auth.*;
 import com.oiis.services.sso.database.entities.sso.RecordStatus;
 import com.oiis.services.sso.database.entities.sso.User;
@@ -76,18 +75,18 @@ public class AuthenticationService {
                     user.get().setPassword(null);
                     dataObject.put("user", objectMapper.convertValue(user, Map.class));
                     result.data = dataObject;
-                    result.httpStatus = HttpStatus.OK;
+                    result.httpStatusCode = HttpStatus.OK.value();
                     result.success = true;
                 } else {
-                    result.httpStatus = HttpStatus.UNAUTHORIZED;
+                    result.httpStatusCode = HttpStatus.UNAUTHORIZED.value();
                     result.message = "user is not active";
                 }
             } else {
-                result.httpStatus = HttpStatus.UNAUTHORIZED;
+                result.httpStatusCode = HttpStatus.UNAUTHORIZED.value();
                 result.message = "password not match";
             }
         } else {
-            result.httpStatus = HttpStatus.UNAUTHORIZED;
+            result.httpStatusCode = HttpStatus.UNAUTHORIZED.value();
             result.message = "user not found";
         }
         logger.debug("getAuthDataResult return is {}",objectMapper.convertValue(result, Map.class));
@@ -104,7 +103,7 @@ public class AuthenticationService {
             if (StringUtils.hasText(userDto.getEmail()) && StringUtils.hasText(userDto.getPassword())) {
                 result = getAuthDataResult(usersRepository.findByEmail(userDto.getEmail().trim().toLowerCase()),true,userDto.getPassword(), null, true, null);
             } else {
-                result.httpStatus = HttpStatus.EXPECTATION_FAILED;
+                result.httpStatusCode = HttpStatus.EXPECTATION_FAILED.value();
                 result.message = "missing data";
             }
         } catch (Exception e) {
@@ -118,13 +117,13 @@ public class AuthenticationService {
         try {
             if (StringUtils.hasText(password)) {
                 if (password.length() < minPassordLength) {
-                    result.httpStatus = HttpStatus.EXPECTATION_FAILED;
+                    result.httpStatusCode = HttpStatus.EXPECTATION_FAILED.value();
                     result.message = "password length less than " + minPassordLength + " characters";
                 } else {
                     result.success = true;
                 }
             } else {
-                result.httpStatus = HttpStatus.EXPECTATION_FAILED;
+                result.httpStatusCode = HttpStatus.EXPECTATION_FAILED.value();
                 result.message = "empty password";
             }
         } catch (Exception e) {
@@ -149,11 +148,11 @@ public class AuthenticationService {
                         result = getAuthDataResult(usersRepository.findByEmail(userDto.getEmail().trim().toLowerCase()), false, null, null, true, null);
                     }
                 } else {
-                    result.httpStatus = HttpStatus.CONFLICT;
+                    result.httpStatusCode = HttpStatus.CONFLICT.value();
                     result.message = "user already exists";
                 }
             } else {
-                result.httpStatus = HttpStatus.EXPECTATION_FAILED;
+                result.httpStatusCode = HttpStatus.EXPECTATION_FAILED.value();
                 result.message = "missing data";
             }
         } catch (Exception e) {
@@ -176,7 +175,7 @@ public class AuthenticationService {
                     result = getAuthDataResult(usersRepository.findById(Long.valueOf(String.valueOf(result.data))),token);
                 }
             } else {
-                result.httpStatus = HttpStatus.EXPECTATION_FAILED;
+                result.httpStatusCode = HttpStatus.EXPECTATION_FAILED.value();
                 result.message = "missing data";
             }
         } catch (Exception e) {
@@ -198,7 +197,7 @@ public class AuthenticationService {
                     result = getAuthDataResult(usersRepository.findById(Long.valueOf(String.valueOf(result.data))),false,null, null, true, null);
                 }
             } else {
-                result.httpStatus = HttpStatus.EXPECTATION_FAILED;
+                result.httpStatusCode = HttpStatus.EXPECTATION_FAILED.value();
                 result.message = "missing data";
             }
         } catch (Exception e) {
@@ -223,11 +222,11 @@ public class AuthenticationService {
 
                     result.success = true; //sendMail throws exception if error
                 } else {
-                    result.httpStatus = HttpStatus.EXPECTATION_FAILED;
+                    result.httpStatusCode = HttpStatus.EXPECTATION_FAILED.value();
                     result.message = "user not found";
                 }
             } else {
-                result.httpStatus = HttpStatus.EXPECTATION_FAILED;
+                result.httpStatusCode = HttpStatus.EXPECTATION_FAILED.value();
                 result.message = "missing data";
             }
         } catch (Exception e) {
@@ -256,16 +255,16 @@ public class AuthenticationService {
                                 result.success = true;
                             }
                         } else {
-                            result.httpStatus = HttpStatus.EXPECTATION_FAILED;
+                            result.httpStatusCode = HttpStatus.EXPECTATION_FAILED.value();
                             result.message = "token not match";
                         }
                     } else {
-                        result.httpStatus = HttpStatus.EXPECTATION_FAILED;
+                        result.httpStatusCode = HttpStatus.EXPECTATION_FAILED.value();
                         result.message = "user not found";
                     }
                 }
             } else {
-                result.httpStatus = HttpStatus.EXPECTATION_FAILED;
+                result.httpStatusCode = HttpStatus.EXPECTATION_FAILED.value();
                 result.message = "missing data";
             }
         } catch (Exception e) {
