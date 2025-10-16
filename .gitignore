@@ -34,3 +34,5 @@ build/
 
 .env
 /logs/
+sso-service.exe
+sso-service.xml
