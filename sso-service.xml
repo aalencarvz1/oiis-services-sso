@@ -1,9 +1,0 @@
-<service>
-    <id>oiis-sso</id>
-    <name>Oiis SSO</name>
-    <description>Aplicação Java OIIS-SSO rodando como serviço</description>
-    <executable>java</executable>
-    <arguments>-jar D:\PROJECTS\INFORMATIC\OIIS\SERVICES\sso\target\sso-0.0.1-SNAPSHOT.jar</arguments>
-    <logpath>D:\PROJECTS\INFORMATIC\OIIS\SERVICES\sso\logs</logpath>
-    <log mode="roll"/>
-</service>
