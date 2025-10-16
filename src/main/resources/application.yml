@@ -1,5 +1,6 @@
 server:
   port: ${PORT:3000}
+  local-port: ${LOCAL_PORT:3001}
   ssl:
     enabled: ${SSL_ENABLED:false}
     key-store: ${SSL_KEYSTORE_PATH:my_ssl_keystore_path}
