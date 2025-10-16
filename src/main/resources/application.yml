@@ -44,7 +44,7 @@ spring:
           starttls:
             enable: ${SMTP_STARTTLS_ENABLE:false}
 jwt:
-  secret-key: ${JWT_SECRET_KEY:secret_key}
+  secret-key: ${JWT_SECRET_KEY:f324a2deac2fe6c1b8585fd3bae1df33956d6a918cfeffcbf772cb2ec4001bf8}
   default-token-expiration: ${DEFAULT_TOKEN_EXPIRATION:60000}
   default-refresh-token-expiration: ${DEFAULT_REFRESH_TOKEN_EXPIRATION:300000}
 security:
