@@ -27,7 +27,7 @@ The service is designed to be secure, with password hashing via BCrypt, and supp
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/sso-service.git
+git clone https://github.com/aalencarvz1/oiis-services-sso.git
 cd sso-service
 ```
 
