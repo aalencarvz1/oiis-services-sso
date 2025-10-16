@@ -55,6 +55,9 @@ public class AuthenticationService {
     ) throws JsonProcessingException {
         DefaultDataSwap result = new DefaultDataSwap();
         if (user.isPresent()) {
+            if (checkPassword) {
+                logger.debug("checking password {} {} {} {}",password,encoder.encode(password), user.get().getPassword(), encoder.matches(password, user.get().getPassword()));
+            }
             if (!checkPassword || (checkPassword && encoder.matches(password, user.get().getPassword()))) {
                 if (user.get().getDeletedAt() == null && Objects.equals(RecordStatus.ACTIVE,user.get().getStatusRegId())) {
 
