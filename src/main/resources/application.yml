@@ -2,46 +2,46 @@ server:
   port: ${PORT:3000}
   ssl:
     enabled: ${SSL_ENABLED:false}
-    key-store: ${SSL_KEYSTORE_PATH}
-    key-store-password: ${SSL_KEYSTORE_PASSWORD}
+    key-store: ${SSL_KEYSTORE_PATH:my_ssl_keystore_path}
+    key-store-password: ${SSL_KEYSTORE_PASSWORD:my_ssl_keystore_password}
     key-store-type: PKCS12
 spring:
   application:
-    name: sso
+    name: ${APP_NAME:sso}
   jpa:
     hibernate:
-      ddl-auto: update
+      ddl-auto: ${JPA_DDL_AUTO:update}
     properties:
       hibernate:
         dialect:
           org:
             hibernate:
-              dialect: MySQL8Dialect
+              dialect: ${JPA_DIALECT:MySQL8Dialect}
   datasource:
     sso:
-      jdbc-url: ${DB_JDBC_URL:jdbc:mysql://127.0.0.1:3306/oiis_sso}
+      jdbc-url: ${DB_JDBC_URL:jdbc:mysql://127.0.0.1:3306/sso}
       username: ${DB_USER:root}
       password: ${DB_PASSWORD:masterkey}
       driver-class-name: ${DB_DRIVER_CLASS_NAME:com.mysql.cj.jdbc.Driver}
   flyway:
     enabled: false
     baseline-on-migrate: true
-    locations: classpath=db/migration
+    locations: ${FLYWAY_LOCATIONS:classpath=db/migration}
   mail:
-    host: ${MAIL_HOST}
-    port: ${MAIL_PORT}
-    username: ${MAIL_USERNAME}
-    password: ${MAIL_PASSWORD}
-    protocol: ${MAIL_PROTOCOL}
+    host: ${MAIL_HOST:smtp.google.com}
+    port: ${MAIL_PORT:445}
+    username: ${MAIL_USERNAME:my_mail@google.com}
+    password: ${MAIL_PASSWORD:my_password}
+    protocol: ${MAIL_PROTOCOL:https}
     properties:
       mail:
         smtp:
-          auth: true
+          auth: ${SMTP_AUTH:true}
           ssl:
-            enable: true       # para porta 465 (SSL/TLS direto)
-            trust: "*"         # aceita qualquer certificado (equivale rejectUnauthorized: false)
+            enable: ${SMTP_SSL_ENABLE:true}
+            trust: "*"
           starttls:
-            enable: false      # STARTTLS desabilitado, porque porta 465 usa SSL direto
+            enable: ${SMTP_STARTTLS_ENABLE:false}
 jwt:
   secret-key: ${JWT_SECRET_KEY:secret_key}
   default-token-expiration: ${DEFAULT_TOKEN_EXPIRATION:60000}

@@ -217,9 +217,9 @@ public class AuthenticationService {
                 if (user.isPresent()) {
                     user.get().setLastPasswordChangeToken(jwtService.createToken(user.get()));
                     usersRepository.save(user.get());
-                    String subject = "Recuperação de senha";
-                    String text = "Acesse este link para criar uma nova senha: " + passwordRecoverRequestDTO.getPasswordChangeInterfacePath() + "/" + user.get().getLastPasswordChangeToken();
-                    String html = "Acesse este link para criar uma nova senha: <br /><a href=\"" + passwordRecoverRequestDTO.getPasswordChangeInterfacePath() + "/" + user.get().getLastPasswordChangeToken() + "\">Alterar senha</a>";
+                    String subject = "Password Recover";
+                    String text = "Follow this link to create a new password: " + passwordRecoverRequestDTO.getPasswordChangeInterfacePath() + "/" + user.get().getLastPasswordChangeToken();
+                    String html = "Follow this link to create a new password: <br /><a href=\"" + passwordRecoverRequestDTO.getPasswordChangeInterfacePath() + "/" + user.get().getLastPasswordChangeToken() + "\">Change password</a>";
 
                     mailService.sendEmail(passwordRecoverRequestDTO.getEmail().trim().toLowerCase(), subject, text, html);
 

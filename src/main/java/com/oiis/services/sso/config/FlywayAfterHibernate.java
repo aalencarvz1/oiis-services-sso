@@ -6,20 +6,23 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * Manual create flyway bean
+ */
 @Configuration
 public class FlywayAfterHibernate {
-    // Criar manualmente o bean do Flyway
 
-    //@Value("${spring.datasource.sso.jdbc-url}")
-    private final String dbUrl;// = "jdbc:mysql://127.0.0.1:3306/oiis_sso_dev_v1";
+    private final String dbUrl;
 
-    //@Value("${spring.datasource.sso.user}")
-    private final String dbUser;// = "root";
+    private final String dbUser;
 
-    //@Value("${spring.datasource.sso.password}")
-    private final String dbPassword; //= "masterkey";
+    private final String dbPassword;
 
-    public FlywayAfterHibernate(@Value("${spring.datasource.sso.jdbc-url}") String dbUrl, @Value("${spring.datasource.sso.username}") String dbUser, @Value("${spring.datasource.sso.password}") String dbPassword) {
+    public FlywayAfterHibernate(
+            @Value("${spring.datasource.sso.jdbc-url}") String dbUrl,
+            @Value("${spring.datasource.sso.username}") String dbUser,
+            @Value("${spring.datasource.sso.password}") String dbPassword)
+    {
         this.dbUrl = dbUrl;
         this.dbUser = dbUser;
         this.dbPassword = dbPassword;
@@ -41,7 +44,7 @@ public class FlywayAfterHibernate {
     public ApplicationRunner runFlywayAfterHibernate(Flyway flyway) {
         return args -> {
             flyway.migrate();
-            System.out.println("✅ Migrações Flyway executadas após o Hibernate.");
+            System.out.println("✅ Migrações Flyway runned after Hibernate.");
         };
     }
 }

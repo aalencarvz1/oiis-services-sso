@@ -27,7 +27,7 @@ public class RecordStatus extends BaseSsoTableModel {
         this.isActive = isActive != null ? isActive : 1;
     }
 
-    // Constantes equivalentes
+    // equivalent constants
     public static final long ACTIVE = 1;
     public static final long INACTIVE = 2;
 }

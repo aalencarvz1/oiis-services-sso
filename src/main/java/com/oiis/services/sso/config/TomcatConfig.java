@@ -7,6 +7,9 @@ import org.springframework.boot.web.server.WebServerFactoryCustomizer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+/**
+ * Configure server to allow run with external port configured on application.yml and different internal port, wich no requires https
+ */
 @Configuration
 public class TomcatConfig {
 

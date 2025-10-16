@@ -19,7 +19,7 @@ import java.util.Map;
 
 @Configuration
 @EnableJpaRepositories(
-        basePackages = "com.oiis.services.sso.database.repositories.sso",
+        basePackageClasses = com.oiis.services.sso.database.repositories.sso.UsersRepository.class,
         entityManagerFactoryRef = "ssoEntityManagerFactory",
         transactionManagerRef = "ssoTransactionManager"
 )
@@ -43,7 +43,7 @@ public class SsoDbConfig {
 
         return builder
                 .dataSource(ssoDataSource())
-                .packages("com.oiis.services.sso.database.entities.sso")
+                .packages(com.oiis.services.sso.database.entities.sso.User.class)
                 .persistenceUnit("sso")
                 .properties(properties)
                 .build();

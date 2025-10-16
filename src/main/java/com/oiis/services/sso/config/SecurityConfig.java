@@ -41,8 +41,8 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-                .csrf(csrf -> csrf.disable()) // desabilita CSRF no novo padrão
-                .cors(cors -> {}) // habilita CORS
+                .csrf(csrf -> csrf.disable())
+                .cors(cors -> {}) // enable CORS
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(PUBLIC_ENDPOINTS.toArray(new String[0]))
                         .permitAll()
