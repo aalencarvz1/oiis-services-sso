@@ -92,7 +92,7 @@ The default name is defined in `application.yml` under the property:
 spring:
   datasource:
     sso:
-      url: jdbc:mysql://localhost:3306/sso_db
+      url: jdbc:mysql://localhost:3306/my_sso
       username: root
       password: root
 ```
@@ -100,7 +100,7 @@ spring:
 Create this database manually in MySQL or MariaDB:
 
 ```sql
-CREATE DATABASE sso_db CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE my_sso CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ```
 
 If you want to use a different database, update the `application.yml` accordingly or create an `.env` file with custom environment variables.
