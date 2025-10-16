@@ -1,6 +1,6 @@
 package com.oiis.services.sso.controllers.rest.auth;
 
-import com.oiis.libs.java.spring.commons.DefaultDataSwap;
+import com.oiis.services.sso.helpers.DefaultDataSwap;
 import com.oiis.services.sso.services.auth.AuthenticationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

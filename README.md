@@ -213,7 +213,7 @@ protected void doFilterInternal(HttpServletRequest request, HttpServletResponse 
         .uri("http://localhost:3001/auth/check_token")
         .accept(MediaType.APPLICATION_JSON)
         .contentType(MediaType.APPLICATION_JSON)
-        .bodyValue("{"token":"" + token + ""}")
+        .bodyValue("{\"token\":\"" + token + "\"}")
         .exchangeToMono(requestResponse ->
             requestResponse.bodyToMono(DefaultDataSwap.class)
                 .map(body -> ResponseEntity.status(requestResponse.statusCode()).body(body))

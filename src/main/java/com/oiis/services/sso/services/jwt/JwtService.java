@@ -1,7 +1,7 @@
 package com.oiis.services.sso.services.jwt;
 
-import com.oiis.libs.java.spring.commons.DefaultDataSwap;
 import com.oiis.services.sso.database.entities.sso.User;
+import com.oiis.services.sso.helpers.DefaultDataSwap;
 import com.oiis.services.sso.properties.jwt.JwtProperties;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;

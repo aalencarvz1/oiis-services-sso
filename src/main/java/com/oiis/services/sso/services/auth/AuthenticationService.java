@@ -2,7 +2,6 @@ package com.oiis.services.sso.services.auth;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.oiis.libs.java.spring.commons.DefaultDataSwap;
 import com.oiis.services.sso.controllers.rest.auth.PasswordRecoverRequestDTO;
 import com.oiis.services.sso.controllers.rest.auth.RefreshTokenRequestDTO;
 import com.oiis.services.sso.controllers.rest.auth.TokenRequestDTO;
@@ -11,6 +10,7 @@ import com.oiis.services.sso.controllers.rest.auth.PasswordChangeRequestDTO;
 import com.oiis.services.sso.database.entities.sso.RecordStatus;
 import com.oiis.services.sso.database.entities.sso.User;
 import com.oiis.services.sso.database.repositories.sso.UsersRepository;
+import com.oiis.services.sso.helpers.DefaultDataSwap;
 import com.oiis.services.sso.services.jwt.JwtService;
 import com.oiis.services.sso.services.mail.MailService;
 import org.slf4j.Logger;
