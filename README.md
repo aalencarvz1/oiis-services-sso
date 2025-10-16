@@ -27,8 +27,13 @@ The service is designed to be secure, with password hashing via BCrypt, and supp
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/aalencarvz1/oiis-services-sso.git
-cd sso-service
+  git clone https://github.com/aalencarvz1/oiis-services-sso.git
+```
+
+### Open project folder on your java IDE or:
+
+```bash
+  cd oiis-services-sso
 ```
 
 ### 2. Build the Project
@@ -36,13 +41,13 @@ cd sso-service
 Make sure you have **Java 17+** and **Maven 3.8+** installed.
 
 ```bash
-mvn clean install
+  mvn clean install
 ```
 
 ### 3. Run the Application
 
 ```bash
-mvn spring-boot:run
+  mvn spring-boot:run
 ```
 
 By default, the service will start at:
