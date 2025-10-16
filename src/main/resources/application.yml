@@ -20,7 +20,7 @@ spring:
               dialect: ${JPA_DIALECT:MySQL8Dialect}
   datasource:
     sso:
-      jdbc-url: ${DB_JDBC_URL:jdbc:mysql://127.0.0.1:3306/sso}
+      jdbc-url: ${DB_JDBC_URL:jdbc:mysql://127.0.0.1:3306/my_sso}
       username: ${DB_USER:root}
       password: ${DB_PASSWORD:masterkey}
       driver-class-name: ${DB_DRIVER_CLASS_NAME:com.mysql.cj.jdbc.Driver}
