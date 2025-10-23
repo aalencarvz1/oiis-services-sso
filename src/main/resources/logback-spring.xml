@@ -10,6 +10,7 @@
         <appender-ref ref="FILE" />
     </root>
     <logger name="com.oiis.services.sso" level="DEBUG"/>
+    <logger name="com.oiis.sso_starter" level="DEBUG"/>
     <logger name="com.oiis.libs.java.spring.commons" level="DEBUG"/>
     <logger name="org.springframework" level="WARN"/>
     <logger name="org.springframework.transaction" level="TRACE"/>
