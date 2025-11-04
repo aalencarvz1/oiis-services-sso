@@ -9,25 +9,26 @@ sso:
       enabled: ${SSO_SERVER_SSL_ENABLED:false}
       key-store: ${SSO_SERVER_SSL_KEYSTORE_PATH:my_ssl_keystore_path}
       key-store-password: ${SSO_SERVER_SSL_KEYSTORE_PASSWORD:my_ssl_keystore_password}
-      key-store-type: PKCS12
-  jpa:
-    hibernate:
-      ddl-auto: ${SSO_JPA_DDL_AUTO:update}
-    properties:
+      key-store-type: ${SSO_SERVER_SSL_KEYSTORE_TYPE:PKCS12}
+  database:
+    datasource:
+      jdbc-url: ${SSO_DB_JDBC_URL:jdbc:mysql://127.0.0.1:3306/my_sso}
+      username: ${SSO_DB_USER:root}
+      password: ${SSO_DB_PASSWORD:masterkey}
+      driver-class-name: ${SSO_DB_DRIVER_CLASS_NAME:com.mysql.cj.jdbc.Driver}
+    flyway:
+      enabled: false
+      baseline-on-migrate: true
+      locations: ${SSO_FLYWAY_LOCATIONS:classpath=db/migration}
+    jpa:
       hibernate:
-        dialect:
-          org:
-            hibernate:
-              dialect: ${SSO_JPA_DIALECT:MySQL8Dialect}
-  datasource:
-    jdbc-url: ${SSO_DB_JDBC_URL:jdbc:mysql://127.0.0.1:3306/my_sso}
-    username: ${SSO_DB_USER:root}
-    password: ${SSO_DB_PASSWORD:masterkey}
-    driver-class-name: ${SSO_DB_DRIVER_CLASS_NAME:com.mysql.cj.jdbc.Driver}
-  flyway:
-    enabled: false
-    baseline-on-migrate: true
-    locations: ${SSO_FLYWAY_LOCATIONS:classpath=db/migration}
+        ddl-auto: ${SSO_JPA_DDL_AUTO:update}
+      properties:
+        hibernate:
+          dialect:
+            org:
+              hibernate:
+                dialect: ${SSO_JPA_DIALECT:MySQL8Dialect}
   jwt:
     secret-key: ${SSO_JWT_SECRET_KEY:f324a2deac2fe6c1b8585fd3bae1df33956d6a918cfeffcbf772cb2ec4001bf8}
     default-token-expiration: ${SSO_JWT_DEFAULT_TOKEN_EXPIRATION:60000}
