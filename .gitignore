@@ -34,5 +34,6 @@ build/
 
 .env
 /logs/
+/assets/
 sso-service.exe
 sso-service.xml
