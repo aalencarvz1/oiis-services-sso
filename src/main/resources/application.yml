@@ -39,8 +39,8 @@ sso:
   auth:
     google:
       enabled: ${SSO_AUTH_GOOGLE_ENABLED:false}
-      client-id: ${SSO_AUTH_GOOGLE_CLIENT_ID:null}
-      client-secret: ${SSO_AUTH_GOOGLE_CLIENT_SECRET:null}
+      client-id: ${SSO_AUTH_GOOGLE_CLIENT_ID}
+      client-secret: ${SSO_AUTH_GOOGLE_CLIENT_SECRET}
   mail:
     host: ${SSO_MAIL_HOST:smtp.google.com}
     port: ${SSO_MAIL_PORT:445}
