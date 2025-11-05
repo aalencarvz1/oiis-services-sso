@@ -1,0 +1,18 @@
+{
+    "web": {
+        "client_id": "304750800991-m1764het6qhmthiov5fcn065qacbkr36.apps.googleusercontent.com",
+        "project_id": "oiissso",
+        "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+        "token_uri": "https://oauth2.googleapis.com/token",
+        "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+        "client_secret": "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",
+        "redirect_uris": [
+            "https://sso.jumboalimentos.com.br/auth/google/callback"
+        ],
+        "javascript_origins": [
+            "https://sso.jumboalimentos.com.br",
+            "https://jumbo.brctec.com:3000",
+            "http://jumbo.brctec.com:3001"
+        ]
+    }
+}

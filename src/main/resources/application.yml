@@ -36,6 +36,11 @@ sso:
   security:
     password-rules:
       min-length: ${SSO_SECURITY_DEFAULT_MIN_PASSWORD_LENGTH:8}
+  auth:
+    google:
+      enabled: ${SSO_AUTH_GOOGLE_ENABLED:false}
+      client-id: ${SSO_AUTH_GOOGLE_CLIENT_ID:null}
+      client-secret: ${SSO_AUTH_GOOGLE_CLIENT_SECRET:null}
   mail:
     host: ${SSO_MAIL_HOST:smtp.google.com}
     port: ${SSO_MAIL_PORT:445}

@@ -11,6 +11,11 @@
     </root>
     <logger name="com.oiis.services.sso" level="DEBUG"/>
     <logger name="com.oiis.sso_starter" level="DEBUG"/>
+
+    <!-- Mostra todos os endpoints REST mapeados -->
+    <logger name="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping" level="TRACE"/>
+
+
     <logger name="com.oiis.libs.java.spring.commons" level="DEBUG"/>
     <logger name="org.springframework" level="WARN"/>
     <logger name="org.springframework.transaction" level="TRACE"/>
