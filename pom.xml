@@ -42,7 +42,7 @@
         <dependency>
             <groupId>io.github.aalencarvz1.libs.security.sso</groupId>
             <artifactId>sso-starter</artifactId>
-            <version>1.4.0-SNAPSHOT</version>
+            <version>1.4.1</version>
         </dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
