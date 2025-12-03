@@ -5,14 +5,17 @@
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>3.5.6</version>
+		<version>4.0.0</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.oiis.services</groupId>
 	<artifactId>sso</artifactId>
-	<version>1.0.0</version>
+	<version>2.0.0-SNAPSHOT</version>
 	<name>sso</name>
-	<description>SSO basic system</description>
+    <description>
+        ⚠️ DEPRECATED — This artifact is no longer maintained.
+        Please migrate to the new library at: com.sysnormal.services.security.sso:sso
+    </description>
 	<url/>
 	<licenses>
 		<license/>
@@ -27,7 +30,9 @@
 		<url/>
 	</scm>
 	<properties>
-		<java.version>17</java.version>
+        <java.version>21</java.version>
+        <maven.compiler.source>${java.version}</maven.compiler.source>
+        <maven.compiler.target>${java.version}</maven.compiler.target>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -35,14 +40,14 @@
 			<artifactId>spring-boot-starter</artifactId>
 		</dependency>
         <dependency>
-            <groupId>me.paulschwarz</groupId>
-            <artifactId>spring-dotenv</artifactId>
-            <version>4.0.0</version>
+            <groupId>one.stayfocused.spring</groupId>
+            <artifactId>dotenv-spring-boot</artifactId>
+            <version>1.0.0</version>
         </dependency>
         <dependency>
             <groupId>io.github.aalencarvz1.libs.security.sso</groupId>
             <artifactId>sso-starter</artifactId>
-            <version>1.5.0</version>
+            <version>2.0.0</version>
         </dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -53,6 +58,24 @@
 
 	<build>
 		<plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-toolchains-plugin</artifactId>
+                <version>3.2.0</version>
+                <executions>
+                    <execution>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>toolchain</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <toolchains>
+                        <jdk>21</jdk>
+                    </toolchains>
+                </configuration>
+            </plugin>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
